@@ -1,8 +1,13 @@
 <template>
-  <div>
-    <b style="color: green">{{count}}</b> / <b> {{total}}</b>
-  </div>
-
+  <v-container>
+    <v-row>
+      <v-col align="center">
+        <v-card class="score">
+          <span class="good">{{count}}</span> / <span class="bad"> {{ total - count }}</span> / <b> {{total}}</b>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -36,8 +41,11 @@ export default {
 </script>
 
 <style scoped>
-  div {
-    font-size: 60px
+  .score {
+    font-size: 10rem;
+    max-width: 45rem
   }
+  .good { color: green}
+  .bad { color: red}
 
 </style>

@@ -3,8 +3,8 @@ const SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition
 const SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
 const SpeechRecognitionEvent = SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
 
-const positive = [ 'tak', 'yes', 'yest', 'yeah', 'yea', 'plus', 'ploos', '+', 'close'];
-const negative = [ 'no', 'nope', 'nah', 'nie', 'minus', 'midas', '-', 'minos']
+const positive = [ 'jest', 'tak', 'siedzi', 'plus', '+', '1'];
+const negative = [ 'nie', 'nie ma', 'minus', '-', '0']
 const keywords = [...positive, ...negative]
 const grammar = '#JSGF V1.0; grammar words; public <word> = ' + keywords.join(' | ') + ' ;'
 
@@ -14,7 +14,7 @@ export default function startDetection(onData, onError) {
     speechRecognitionList.addFromString(grammar, 1)
     recognition.grammars = speechRecognitionList
     recognition.continuous = true
-    recognition.lang = 'en-US';
+    recognition.lang = 'pl-PL';
     recognition.interimResults = false
     recognition.maxAlternatives = 1
 
