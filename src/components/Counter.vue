@@ -33,7 +33,7 @@
 
 <script>
 import startDetection from './VoiceDetection'
-import {onBeforeUnmount, ref, computed} from "@vue/composition-api"
+import {onMounted, onBeforeUnmount, ref, computed} from "@vue/composition-api"
 export default {
   name: "Counter.vue",
   setup() {
@@ -59,6 +59,10 @@ export default {
       }
     }
 
+    onMounted(() => {
+      setHistory(document.location.hash)
+    })
+
     onBeforeUnmount(() => {
       console.log('unmounting!')
       if (stop) stop()
@@ -81,6 +85,7 @@ export default {
 
     const setHistory = (str) => {
       history.value = str.replace(/[^01 ,]/g, '')
+      document.location.hash = history.value
       count.value = str.match(/1/g)?.length || 0
       total.value = str.match(/[01]/g)?.length || 0
     }

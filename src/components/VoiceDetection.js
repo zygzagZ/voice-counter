@@ -15,14 +15,14 @@ export default function startDetection(onData, onError) {
     recognition.grammars = speechRecognitionList
     recognition.continuous = true
     recognition.lang = 'pl-PL';
-    recognition.interimResults = false
+    recognition.interimResults = true
     recognition.maxAlternatives = 1
 
     recognition.onresult = (e) => {
         console.log('speech result:', e)
         const result = e.results[e.resultIndex]
         if (!result.isFinal) {
-            console.log('not final result!', result)
+            console.log('not final result!', result, [...result].map((alt) => alt.transcript.toLowerCase().trim()))
         } else {
             for (const alt of result) {
                 const words = alt.transcript.toLowerCase().trim()
@@ -42,17 +42,25 @@ export default function startDetection(onData, onError) {
 
     recognition.onspeechend = (e) => {
         console.log('speech end: ', e)
+        setTimeout(() => recognition.start(), 1000)
     }
 
     recognition.onnomatch = (e) => {
         console.log('no match found: ', e)
+        setTimeout(() => recognition.start(), 100)
     }
 
     recognition.onerror = (e) => {
+        if (e.error === 'no-speech') {
+            console.error('no speech err: ', e)
+            setTimeout(() => recognition.start(), 0)
+            return
+        }
         console.error('Recognition error: ', e)
         if (onError) onError(e)
     }
 
     recognition.start();
+    window.recognition = recognition
     return () => recognition.stop()
 }
