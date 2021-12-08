@@ -17,14 +17,14 @@
         </v-container>
         <v-card :style="{fontSize}">
 
-          <span class="good">{{count}}</span> / <span class="bad"> {{ total - count }}</span> / <b> {{total}}</b>
+          <span class="good" @click="append(1)">{{count}}</span> / <span class="bad" @click="append(0)"> {{ total - count }}</span> / <b> {{total}}</b>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
       <v-col align="center">
         <v-card>
-          <v-text-field v-model="history"/>
+          <v-text-field :value="count ? history : history" @input="setHistory" @keydown="filterKeys"/>
         </v-card>
       </v-col>
     </v-row>
@@ -42,15 +42,17 @@ export default {
     const history = ref('')
 
     let stop = null
-    const start = () => {
-      const stopCallback = startDetection((res) => {
-        if (res) count.value++
-        total.value++;
+    const append = (good) => {
+      if (good) count.value++
+      total.value++;
 
-        history.value += +res
-      }, (err) => {
-        console.error(err)
-      })
+      history.value += +good
+    }
+    const start = () => {
+      const stopCallback = startDetection(
+          (res) => append(res),
+          (err) => console.error(err)
+      )
       stop = () => {
         stopCallback()
         stop = null
@@ -59,7 +61,7 @@ export default {
 
     onBeforeUnmount(() => {
       console.log('unmounting!')
-      stop()
+      if (stop) stop()
     })
 
     const size = ref(100)
@@ -77,7 +79,19 @@ export default {
       }
     }
 
-    return {count, total, history, size, fontSize, toggle, running}
+    const setHistory = (str) => {
+      history.value = str.replace(/[^01 ,]/g, '')
+      count.value = str.match(/1/g)?.length || 0
+      total.value = str.match(/[01]/g)?.length || 0
+    }
+
+    const filterKeys = (e) => {
+      if (e.keyCode > 32 && !/^[01 ,;]$/.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        e.preventDefault();
+      }
+    }
+
+    return {count, total, history, size, fontSize, toggle, running, setHistory, append, filterKeys}
   }
 }
 </script>
