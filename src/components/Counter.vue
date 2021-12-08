@@ -43,7 +43,8 @@ export default {
 <style scoped>
   .score {
     font-size: 10rem;
-    max-width: 45rem
+    width: fit-content;
+    padding: 0 2rem;
   }
   .good { color: green}
   .bad { color: red}
