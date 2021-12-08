@@ -2,8 +2,17 @@
   <v-container>
     <v-row>
       <v-col align="center">
-        <v-card class="score">
+        <input type="range" min="10" max="300" :value="size" @input="size=$event.target.value"/>
+        <v-card :style="{fontSize}">
+
           <span class="good">{{count}}</span> / <span class="bad"> {{ total - count }}</span> / <b> {{total}}</b>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col align="center">
+        <v-card>
+          <v-text-field v-model="history"/>
         </v-card>
       </v-col>
     </v-row>
@@ -12,13 +21,14 @@
 
 <script>
 import startDetection from './VoiceDetection'
-import {onMounted, onBeforeUnmount, ref} from "vue"
+import {onMounted, onBeforeUnmount, ref, computed} from "vue"
 export default {
   name: "Counter.vue",
   setup() {
     const count = ref(0)
     const total = ref(0)
-    const history = ref([])
+    const history = ref('')
+    const size = ref(100)
 
     let stop = null
     onMounted(() => {
@@ -35,17 +45,14 @@ export default {
       stop()
     })
 
-    return {count, total, history}
+    const fontSize = computed(() => size.value / 10 + 'rem')
+
+    return {count, total, history, size, fontSize}
   }
 }
 </script>
 
 <style scoped>
-  .score {
-    font-size: 10rem;
-    width: fit-content;
-    padding: 0 2rem;
-  }
   .good { color: green}
   .bad { color: red}
 

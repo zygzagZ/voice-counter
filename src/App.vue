@@ -1,7 +1,13 @@
 <template>
   <v-app>
     <v-main>
-      <Counter/>
+      <v-container>
+        <v-row>
+          <v-col>
+            <Counter/>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
