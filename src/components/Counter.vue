@@ -2,7 +2,19 @@
   <v-container>
     <v-row>
       <v-col align="center">
-        <input type="range" min="10" max="300" :value="size" @input="size=$event.target.value"/>
+        <v-container>
+          <v-row>
+            <v-col cols="10">
+              <v-slider min="10" max="300" v-model="size"/>
+            </v-col>
+            <v-col cols="2">
+              <v-btn @click="toggle">
+                <v-icon> mdi-{{ running ? 'pause' : 'play' }} </v-icon>
+                {{ running ? 'stop' : 'start' }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
         <v-card :style="{fontSize}">
 
           <span class="good">{{count}}</span> / <span class="bad"> {{ total - count }}</span> / <b> {{total}}</b>
@@ -21,33 +33,49 @@
 
 <script>
 import startDetection from './VoiceDetection'
-import {onMounted, onBeforeUnmount, ref, computed} from "@vue/composition-api"
+import {onBeforeUnmount, ref, computed} from "@vue/composition-api"
 export default {
   name: "Counter.vue",
   setup() {
     const count = ref(0)
     const total = ref(0)
     const history = ref('')
-    const size = ref(100)
 
     let stop = null
-    onMounted(() => {
-      stop = startDetection((res) => {
+    const start = () => {
+      const stopCallback = startDetection((res) => {
         if (res) count.value++
         total.value++;
       }, (err) => {
         console.error(err)
       })
-    })
+      stop = () => {
+        stopCallback()
+        stop = null
+      }
+    }
 
     onBeforeUnmount(() => {
       console.log('unmounting!')
       stop()
     })
 
+    const size = ref(100)
     const fontSize = computed(() => size.value / 10 + 'rem')
 
-    return {count, total, history, size, fontSize}
+
+    const running = ref(false)
+
+    const toggle = () => {
+      running.value = !running.value
+      if (stop) {
+        stop()
+      } else {
+        start()
+      }
+    }
+
+    return {count, total, history, size, fontSize, toggle, running}
   }
 }
 </script>
