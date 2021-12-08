@@ -21,7 +21,7 @@
 
 <script>
 import startDetection from './VoiceDetection'
-import {onMounted, onBeforeUnmount, ref, computed} from "vue"
+import {onMounted, onBeforeUnmount, ref, computed} from "@vue/composition-api"
 export default {
   name: "Counter.vue",
   setup() {
