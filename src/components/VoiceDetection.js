@@ -3,7 +3,7 @@ const SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition
 const SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
 const SpeechRecognitionEvent = SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
 
-const positive = [ 'jest', 'tak', 'siedzi', 'plus', '+', '1'];
+const positive = [ 'dobrze', 'jest', 'tak', 'siedzi', 'plus', '+', '1'];
 const negative = [ 'nie', 'nie ma', 'minus', '-', '0']
 const keywords = [...positive, ...negative]
 const grammar = '#JSGF V1.0; grammar words; public <word> = ' + keywords.join(' | ') + ' ;'
