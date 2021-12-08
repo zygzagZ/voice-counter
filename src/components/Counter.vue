@@ -46,6 +46,8 @@ export default {
       const stopCallback = startDetection((res) => {
         if (res) count.value++
         total.value++;
+
+        history.value += +res
       }, (err) => {
         console.error(err)
       })
