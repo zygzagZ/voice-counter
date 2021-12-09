@@ -78,7 +78,7 @@ export default {
     }
 
     onMounted(() => {
-      setHistory(document.location.hash)
+      setHistory(decodeURI(document.location.hash))
     })
 
     onBeforeUnmount(() => {
