@@ -99,7 +99,7 @@ export default {
     }
 
     const filterKeys = (e) => {
-      if (e.keyCode > 32 && !/^[01 ,;]$/.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
+      if (e.keyCode > 40 && !/^[01 ,;]$/.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
         e.preventDefault()
       }
     }
