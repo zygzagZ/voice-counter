@@ -17,14 +17,14 @@
         </v-container>
         <v-card :style="{fontSize}">
 
-          <span class="good" @click="append(1)">{{count}}</span> / <span class="bad" @click="append(0)"> {{ total - count }}</span> / <b> {{total}}</b>
+          <span class="good" @click="addResult(1)">{{count}}</span> / <span class="bad" @click="addResult(0)"> {{ total - count }}</span> / <b> {{total}}</b>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
       <v-col align="center">
         <v-card>
-          <v-text-field :value="count ? history : history" @input="setHistory" @keydown="filterKeys"/>
+          <v-text-field :value="occurrences" @input="setHistory" @keydown="filterKeys"/>
         </v-card>
       </v-col>
     </v-row>
@@ -39,24 +39,42 @@ export default {
   setup() {
     const count = ref(0)
     const total = ref(0)
-    const history = ref('')
+    const occurrences = ref('')
+    const running = ref(false)
+
+
+
+    const addPause = () => {
+      occurrences.value += ' '
+      history.pushState(null, '', '#' + occurrences.value)
+    }
+    let addPauseTimeout = null
+
+    const addResult = (good) => {
+      clearTimeout(addPauseTimeout)
+      addPauseTimeout = setTimeout(addPause, 10*60*1000)
+
+      if (good) count.value++
+      total.value++
+
+      occurrences.value += ''+ +!!good
+      history.replaceState(null, '', '#' + occurrences.value)
+    }
 
     let stop = null
-    const append = (good) => {
-      if (good) count.value++
-      total.value++;
-
-      history.value += +good
-    }
     const start = () => {
-      const stopCallback = startDetection(
-          (res) => append(res),
+      stop = startDetection(
+          (res) => addResult(res),
           (err) => console.error(err)
       )
-      stop = () => {
-        stopCallback()
-        stop = null
-      }
+    }
+
+    const setHistory = (str) => {
+      const stripped = str.replace(/[^01 ,]/g, '')
+      occurrences.value = stripped
+      history.replaceState(null, '', '#' + stripped)
+      count.value = stripped.match(/1/g)?.length || 0
+      total.value = stripped.match(/[01]/g)?.length || 0
     }
 
     onMounted(() => {
@@ -65,38 +83,28 @@ export default {
 
     onBeforeUnmount(() => {
       console.log('unmounting!')
-      if (stop) stop()
+      if (running.value) stop()
     })
 
     const size = ref(100)
     const fontSize = computed(() => size.value / 10 + 'rem')
 
-
-    const running = ref(false)
-
     const toggle = () => {
       running.value = !running.value
-      if (stop) {
-        stop()
-      } else {
+      if (running.value) {
         start()
+      } else {
+        stop()
       }
-    }
-
-    const setHistory = (str) => {
-      history.value = str.replace(/[^01 ,]/g, '')
-      document.location.hash = history.value
-      count.value = str.match(/1/g)?.length || 0
-      total.value = str.match(/[01]/g)?.length || 0
     }
 
     const filterKeys = (e) => {
       if (e.keyCode > 32 && !/^[01 ,;]$/.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        e.preventDefault();
+        e.preventDefault()
       }
     }
 
-    return {count, total, history, size, fontSize, toggle, running, setHistory, append, filterKeys}
+    return {count, total, occurrences, size, fontSize, toggle, running, setHistory, addResult, filterKeys}
   }
 }
 </script>
