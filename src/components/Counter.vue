@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:100,200,300,400,600,700' rel='stylesheet' type='text/css'>
     <v-row>
       <v-col align="center">
         <v-container>
@@ -15,9 +16,10 @@
             </v-col>
           </v-row>
         </v-container>
-        <v-card :style="{fontSize}">
+        <v-card :style="{fontSize}" class="scores">
 
-          <span class="good" @click="addResult(1)">{{count}}</span> / <span class="bad" @click="addResult(0)"> {{ total - count }}</span> / <b> {{total}}</b>
+          <span class="good" @click="addResult(1)">{{count}}</span> : <span class="bad" @click="addResult(0)"> {{ total - count }}</span> <br>
+          <b> {{total}} </b> <span v-if="total !== 0" class="percents">{{ (count / total * 100).toFixed(1) }}%</span>
         </v-card>
       </v-col>
     </v-row>
@@ -112,5 +114,13 @@ export default {
 <style scoped>
   .good { color: green}
   .bad { color: red}
+  .percents {
+    font-size: 0.5em;
+    font-weight: 100;
+    opacity: 0.6;
+  }
+  .scores {
+    font-family: 'Open Sans', sans-serif;
+  }
 
 </style>
