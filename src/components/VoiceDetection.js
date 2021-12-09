@@ -17,6 +17,13 @@ export default function startDetection(onData, onError) {
     recognition.lang = 'pl-PL';
     recognition.interimResults = true
     recognition.maxAlternatives = 1
+    let stopped = false
+    const restart = (reason) => {
+        if (!stopped) {
+            recognition.start()
+            console.log('recognition restarted, reason: ', reason)
+        }
+    }
 
     recognition.onresult = (e) => {
         console.log('speech result:', e)
@@ -40,20 +47,17 @@ export default function startDetection(onData, onError) {
         }
     }
 
-    recognition.onspeechend = (e) => {
-        console.log('speech end: ', e)
-        setTimeout(() => recognition.start(), 1000)
+    recognition.onspeechend = () => {
+        setTimeout(restart, 1000, 'speech end')
     }
 
-    recognition.onnomatch = (e) => {
-        console.log('no match found: ', e)
-        setTimeout(() => recognition.start(), 100)
+    recognition.onnomatch = () => {
+        setTimeout(restart, 100, 'no match')
     }
 
     recognition.onerror = (e) => {
         if (e.error === 'no-speech') {
-            console.error('no speech err: ', e)
-            setTimeout(() => recognition.start(), 0)
+            setTimeout(restart, 0, 'no speech')
             return
         }
         console.error('Recognition error: ', e)
@@ -61,6 +65,9 @@ export default function startDetection(onData, onError) {
     }
 
     recognition.start();
-    window.recognition = recognition
-    return () => recognition.stop()
+    return () => {
+        stopped = true
+        recognition.stop()
+        console.log('stopping recognition!')
+    }
 }
