@@ -6,8 +6,8 @@
 const SpeechRecognition = SpeechRecognition || window.webkitSpeechRecognition
 const SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
 
-const positive = [ 'dobrze', 'jest', 'tak', 'siedzi', 'plus', '+', '1']
-const negative = [ 'nie', 'nie ma', 'minus', '-', '0']
+const positive = [ 'traf', 'plus', 'jeden', 'dobrze', 'jest', 'tak', 'siedzi', 'tech', '+', '1']
+const negative = [ 'pudło', 'nie', 'minus', '-', '0']
 const keywords = [...positive, ...negative]
 const grammar = '#JSGF V1.0; grammar words; public <word> = ' + keywords.join(' | ') + ' ;'
 const speechRecognitionList = new SpeechGrammarList()
@@ -53,9 +53,9 @@ export default {
       } else {
         for (const alt of result) {
           const words = alt.transcript.toLowerCase().trim()
-          if (positive.includes(words)) {
+          if (positive.find(prefix => words.startsWith(prefix))) {
             emit("input", true)
-          } else if (negative.includes(words)) {
+          } else if (negative.find(prefix => words.startsWith(prefix))) {
             emit("input", false)
           } else {
             emit("notRecognized", alt.transcript)
